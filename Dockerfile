@@ -16,7 +16,7 @@ RUN apt install curl wget -y
 # along with utilities which work with them
 RUN apt install software-properties-common -y
 RUN add-apt-repository ppa:deadsnakes/ppa
-RUN apt install python3.11 golang -y
+RUN apt install python3.13 golang -y
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # install basic dev utilities
@@ -33,7 +33,7 @@ RUN apt install pipx -y
 RUN pipx ensurepath && pipx install mitmproxy
 
 # install neovim from source
-RUN cd /tmp && wget "https://github.com/neovim/neovim/releases/download/v0.9.5/nvim-linux64.tar.gz" -O - | tar xz && ln -s $(pwd)/nvim-linux64/bin/nvim /usr/bin/nvim
+RUN cd /tmp && wget "https://github.com/neovim/neovim/releases/download/v0.10.0/nvim-linux64.tar.gz" -O - | tar xz && ln -s $(pwd)/nvim-linux64/bin/nvim /usr/bin/nvim
 
 # install packages needed to plugins
 # this list might grow
@@ -78,10 +78,11 @@ RUN nvim --headless "+Lazy! install" +qall
 # Install my personal scripts
 #####################################################
 
-# lm
-RUN cd /tmp && git clone https://github.com/WillChangeThisLater/go-llm && cd go-llm && go build && cp go-llm /bin/lm && rm -rf /tmp/go-llm
-
-# misc shell scripts
+# install misc shell scripts
 RUN cd /root && git clone https://github.com/WillChangeThisLater/shell-scripts && stow -t /bin shell-scripts
+RUN cd shell-scripts && ./setup.sh
+
+# lm
+RUN cd /tmp && git clone https://github.com/WillChangeThisLater/lm && cd lm && go build && cp lm /bin/lm && rm -rf /tmp/go-llm
 
 CMD ["/bin/tmux"]
